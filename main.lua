@@ -208,7 +208,8 @@ function mod:SpawnKnifePieces()
         end
     end
     if level:GetStageType() == StageType.STAGETYPE_REPENTANCE or level:GetStageType() == StageType.STAGETYPE_REPENTANCE_B then
-        if level:GetAbsoluteStage() == LevelStage.STAGE1_2 then
+        local isCurseLabyrinth = level:GetCurses() & LevelCurse.CURSE_OF_LABYRINTH == LevelCurse.CURSE_OF_LABYRINTH
+        if level:GetAbsoluteStage() == LevelStage.STAGE1_2 and not isCurseLabyrinth or level:GetAbsoluteStage() == LevelStage.STAGE1_1 and isCurseLabyrinth then
             if not room:IsMirrorWorld() then
                 for i = 0,4 do
                     if room:GetDoor(i) then
@@ -235,7 +236,7 @@ function mod:SpawnKnifePieces()
                 end
             end
         end
-        if level:GetAbsoluteStage() == LevelStage.STAGE2_2 then
+        if level:GetAbsoluteStage() == LevelStage.STAGE2_2 and not isCurseLabyrinth or level:GetAbsoluteStage() == LevelStage.Stage2_1 and isCurseLabyrinth then
             if not room:HasCurseMist() then
                 for i = 0,4 do
                     if room:GetDoor(i) then
