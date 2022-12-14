@@ -9,6 +9,8 @@ local mscMng = MusicManager()
 local escapeTrigger = 0
 local json = require("json")
 
+local dssdata = {}
+
 local function GetRandomDarkPoolItem(seed)
     local rng = RNG()
     if seed and type(seed) == "number" then
@@ -149,6 +151,11 @@ function mod:Load(isLoad)
             anyOneHasKnifePiece1 = false
             anyOneHasKnifePiece2 = false
         end
+        if load[6] ~= nil then
+            dssdata = load[6]
+        else
+            dssdata = {}
+        end
     end
     
     local i = 1
@@ -164,7 +171,7 @@ end
 mod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, mod.Load)
 
 function mod:Save(isSave)
-    mod:SaveData(json.encode({hadKnife1,hadKnife2,anyOneHasKnifePiece1,anyOneHasKnifePiece2,DarkItemPool}))
+    mod:SaveData(json.encode({hadKnife1,hadKnife2,anyOneHasKnifePiece1,anyOneHasKnifePiece2,DarkItemPool,dssdata}))
 end
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, mod.Save)
 
@@ -236,7 +243,7 @@ function mod:SpawnKnifePieces()
                 end
             end
         end
-        if level:GetAbsoluteStage() == LevelStage.STAGE2_2 and not isCurseLabyrinth or level:GetAbsoluteStage() == LevelStage.Stage2_1 and isCurseLabyrinth then
+        if level:GetAbsoluteStage() == LevelStage.STAGE2_2 and not isCurseLabyrinth or level:GetAbsoluteStage() == LevelStage.STAGE2_1 and isCurseLabyrinth then
             if not room:HasCurseMist() then
                 for i = 0,4 do
                     if room:GetDoor(i) then
@@ -272,3 +279,261 @@ function mod:SpawnKnifePieces()
     end
 end
 mod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, mod.SpawnKnifePieces)
+
+
+--
+-- MenuProvider
+--
+
+-- Change this variable to match your mod. The standard is "Dead Sea Scrolls (Mod Name)"
+local DSSModName = "Dead Sea Scrolls (Better Knife Pieces)"
+
+-- DSSCoreVersion determines which menu controls the mod selection menu that allows you to enter other mod menus.
+-- Don't change it unless you really need to and make sure if you do that you can handle mod selection and global mod options properly.
+local DSSCoreVersion = 7
+
+-- Every MenuProvider function below must have its own implementation in your mod, in order to handle menu save data.
+local MenuProvider = {}
+
+function MenuProvider.SaveSaveData()
+    mod:Save()
+end
+
+function MenuProvider.GetPaletteSetting()
+    return dssdata.MenuPalette
+end
+
+function MenuProvider.SavePaletteSetting(var)
+    dssdata.MenuPalette = var
+end
+
+function MenuProvider.GetHudOffsetSetting()
+    if not REPENTANCE then
+        return dssdata.HudOffset
+    else
+        return Options.HUDOffset * 10
+    end
+end
+
+function MenuProvider.SaveHudOffsetSetting(var)
+    if not REPENTANCE then
+       dssdata.HudOffset = var
+    end
+end
+
+function MenuProvider.GetGamepadToggleSetting()
+    return dssdata.GamepadToggle
+end
+
+function MenuProvider.SaveGamepadToggleSetting(var)
+   dssdata.GamepadToggle = var
+end
+
+function MenuProvider.GetMenuKeybindSetting()
+    return dssdata.MenuKeybind
+end
+
+function MenuProvider.SaveMenuKeybindSetting(var)
+   dssdata.MenuKeybind = var
+end
+
+function MenuProvider.GetMenuHintSetting()
+    return dssdata.MenuHint
+end
+
+function MenuProvider.SaveMenuHintSetting(var)
+   dssdata.MenuHint = var
+end
+
+function MenuProvider.GetMenuBuzzerSetting()
+    return dssdata.MenuBuzzer
+end
+
+function MenuProvider.SaveMenuBuzzerSetting(var)
+   dssdata.MenuBuzzer = var
+end
+
+function MenuProvider.GetMenusNotified()
+    return dssdata.MenusNotified
+end
+
+function MenuProvider.SaveMenusNotified(var)
+   dssdata.MenusNotified = var
+end
+
+function MenuProvider.GetMenusPoppedUp()
+    return dssdata.MenusPoppedUp
+end
+
+function MenuProvider.SaveMenusPoppedUp(var)
+    dssdata.MenusPoppedUp = var
+end
+
+local DSSInitializerFunction = include("dssmenucore")
+
+-- This function returns a table that some useful functions and defaults are stored on
+local dssmod = DSSInitializerFunction(DSSModName, DSSCoreVersion, MenuProvider)
+
+
+-- Adding a Menu
+
+
+-- Creating a menu like any other DSS menu is a simple process.
+-- You need a "Directory", which defines all of the pages ("items") that can be accessed on your menu, and a "DirectoryKey", which defines the state of the menu.
+local bkpdirectory = {
+    -- The keys in this table are used to determine button destinations.
+    main = {
+        -- "title" is the big line of text that shows up at the top of the page!
+        title = 'better knife pieces',
+
+        -- "buttons" is a list of objects that will be displayed on this page. The meat of the menu!
+        buttons = {
+            -- The simplest button has just a "str" tag, which just displays a line of text.
+            
+            -- The "action" tag can do one of three pre-defined actions:
+            --- "resume" closes the menu, like the resume game button on the pause menu. Generally a good idea to have a button for this on your main page!
+            --- "back" backs out to the previous menu item, as if you had sent the menu back input
+            --- "openmenu" opens a different dss menu, using the "menu" tag of the button as the name
+            {str = 'resume game', action = 'resume'},
+
+            -- The "dest" option, if specified, means that pressing the button will send you to that page of your menu.
+            -- If using the "openmenu" action, "dest" will pick which item of that menu you are sent to.
+            {str = 'settings', dest = 'settings'},
+
+            -- A few default buttons are provided in the table returned from DSSInitializerFunction.
+            -- They're buttons that handle generic menu features, like changelogs, palette, and the menu opening keybind
+            -- They'll only be visible in your menu if your menu is the only mod menu active; otherwise, they'll show up in the outermost Dead Sea Scrolls menu that lets you pick which mod menu to open.
+            -- This one leads to the changelogs menu, which contains changelogs defined by all mods.
+            dssmod.changelogsButton,
+
+            -- Text font size can be modified with the "fsize" tag. There are three font sizes, 1, 2, and 3, with 1 being the smallest and 3 being the largest.
+        },
+
+        -- A tooltip can be set either on an item or a button, and will display in the corner of the menu while a button is selected or the item is visible with no tooltip selected from a button.
+        -- The object returned from DSSInitializerFunction contains a default tooltip that describes how to open the menu, at "menuOpenToolTip"
+        -- It's generally a good idea to use that one as a default!
+        tooltip = dssmod.menuOpenToolTip
+    },
+    settings = {
+        title = 'settings',
+        buttons = {
+            -- These buttons are all generic menu handling buttons, provided in the table returned from DSSInitializerFunction
+            -- They'll only show up if your menu is the only mod menu active
+            -- You should generally include them somewhere in your menu, so that players can change the palette or menu keybind even if your mod is the only menu mod active.
+            -- You can position them however you like, though!
+            dssmod.gamepadToggleButton,
+            dssmod.menuKeybindButton,
+            dssmod.paletteButton,
+            dssmod.menuHintButton,
+            dssmod.menuBuzzerButton,
+
+            {
+                str = 'knife piece 1',
+
+                -- The "choices" tag on a button allows you to create a multiple-choice setting
+                choices = {'was not collected', 'was collected'},
+                -- The "setting" tag determines the default setting, by list index. EG "1" here will result in the default setting being "choice a"
+                setting = 1,
+
+                -- "variable" is used as a key to story your setting; just set it to something unique for each setting!
+                variable = 'hadKnife1',
+                
+                -- When the menu is opened, "load" will be called on all settings-buttons
+                -- The "load" function for a button should return what its current setting should be
+                -- This generally means looking at your mod's save data, and returning whatever setting you have stored
+                load = function()
+                    return hadKnife1 and 2 or 1
+                end,
+
+                -- When the menu is closed, "store" will be called on all settings-buttons
+                -- The "store" function for a button should save the button's setting (passed in as the first argument) to save data!
+                store = function(var)
+                    if var == 1 then
+                        hadKnife1 = false
+                        hadKnife2 = false
+                    else
+                        hadKnife1 = true
+                    end
+                end,
+
+                -- A simple way to define tooltips is using the "strset" tag, where each string in the table is another line of the tooltip
+                tooltip = {strset = {'option for', 'knife piece 1.', 'this option', ' will affect','\'knife piece 2\'', 'option below','when leaving', 'dss menu'}}
+            },
+
+            {
+                str = 'knife piece 2',
+
+                -- The "choices" tag on a button allows you to create a multiple-choice setting
+                choices = {'was not collected', 'was collected'},
+                -- The "setting" tag determines the default setting, by list index. EG "1" here will result in the default setting being "choice a"
+                setting = 1,
+
+                -- "variable" is used as a key to story your setting; just set it to something unique for each setting!
+                variable = 'hadKnife2',
+                
+                -- When the menu is opened, "load" will be called on all settings-buttons
+                -- The "load" function for a button should return what its current setting should be
+                -- This generally means looking at your mod's save data, and returning whatever setting you have stored
+                load = function()
+                    return hadKnife2 and 2 or 1
+                end,
+
+                -- When the menu is closed, "store" will be called on all settings-buttons
+                -- The "store" function for a button should save the button's setting (passed in as the first argument) to save data!
+                store = function(var)
+                    if var == 1 or not hadKnife1 then
+                        hadKnife2 = false
+                    else
+                        hadKnife2 = true
+                    end
+                end,
+
+                -- A simple way to define tooltips is using the "strset" tag, where each string in the table is another line of the tooltip
+                tooltip = {strset = {'option for', 'knife piece 2.', 'this option','can be set to', '\'was collected\'', 'only when', '\'knife piece 1\'','option set to', '\'was collected\''}}
+            },
+
+            {
+                -- Creating gaps in your page can be done simply by inserting a blank button.
+                -- The "nosel" tag will make it impossible to select, so it'll be skipped over when traversing the menu, while still rendering!
+                str = '',
+                fsize = 2,
+                nosel = true
+            },
+           
+        }
+    }
+}
+
+local bkpdirectorykey = {
+    Item = bkpdirectory.main, -- This is the initial item of the menu, generally you want to set it to your main item
+    Main = 'main', -- The main item of the menu is the item that gets opened first when opening your mod's menu.
+
+    -- These are default state variables for the menu; they're important to have in here, but you don't need to change them at all.
+    Idle = false,
+    MaskAlpha = 1,
+    Settings = {},
+    SettingsChanged = false,
+    Path = {},
+}
+
+DeadSeaScrollsMenu.AddMenu("Better Knife Pieces", {
+    -- The Run, Close, and Open functions define the core loop of your menu
+    -- Once your menu is opened, all the work is shifted off to your mod running these functions, so each mod can have its own independently functioning menu.
+    -- The DSSInitializerFunction returns a table with defaults defined for each function, as "runMenu", "openMenu", and "closeMenu"
+    -- Using these defaults will get you the same menu you see in Bertran and most other mods that use DSS
+    -- But, if you did want a completely custom menu, this would be the way to do it!
+    
+    -- This function runs every render frame while your menu is open, it handles everything! Drawing, inputs, etc.
+    Run = dssmod.runMenu,
+    -- This function runs when the menu is opened, and generally initializes the menu.
+    Open = dssmod.openMenu,
+    -- This function runs when the menu is closed, and generally handles storing of save data / general shut down.
+    Close = dssmod.closeMenu,
+
+    -- If UseSubMenu is set to true, when other mods with UseSubMenu set to false / nil are enabled, your menu will be hidden behind an "Other Mods" button.
+    -- A good idea to use to help keep menus clean if you don't expect players to use your menu very often!
+    UseSubMenu = false,
+
+    Directory = bkpdirectory,
+    DirectoryKey = bkpdirectorykey
+})
