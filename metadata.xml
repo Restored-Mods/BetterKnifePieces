@@ -1,11 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-	<name>Better Knife Piecees</name>
-	<directory>better knife pieces</directory>
-	<description>Have you ever got tired of going through mirror dimension and mineshaft just to collect knife pieces to progress to the Corpse?
-This mod fixes that problem by making them appear in the rooms with mirror and minecart after you collected them ones and left correcponding dimentions.
-Does this those alt paths are useless now? No. Instead of knife pieces they will contain random item from their item pools, giving you an option to go after extra item or just continue your path to the Corpse.
-	</description>
-	<version>1.0</version>
-	<visibility/>
-</metadata>
+    <name>Better Knife Pieces</name>
+    <directory>better knife pieces</directory>
+    <id>2875881571</id>
+    <description>Never do the knife piece tasks again after completing them once, just like in Antibirth!
 
+[img]https://i.imgur.com/cFocxoy.png[/img]
+
+[img]https://i.imgur.com/NRAQaFv.png[/img] [u]Knife Piece 1[/u] = Spawns in the mirror room 
+[img]https://i.imgur.com/lBd4Hve.png[/img] [u]Knife Piece 2[/u] = Spawns in the minecart room
+[list]
+[list]
+[*]The item pedestals originally containing them now have random items
+[*]The replacement occurs after completing the knife piece tasks once
+[/list]
+[/list]
+
+[img]https://i.imgur.com/SK84PpX.png[/img]
+[list]
+[*][u]𝐃𝐢𝐫𝐞𝐜𝐭𝐨𝐫, 𝐆𝐫𝐚𝐩𝐡𝐢𝐜 𝐃𝐞𝐬𝐢𝐠𝐧𝐞𝐫[/u] = [url=https://steamcommunity.com/profiles/76561198374458982/]Sillst[/url]
+[*][u]𝐂𝐨𝐝𝐞𝐫[/u] = [url=https://steamcommunity.com/id/brakedude]BrakeDude[/url]
+[*][u]𝐏𝐥𝐚𝐲𝐭𝐞𝐬𝐭𝐞𝐫𝐬[/u]= [url=https://steamcommunity.com/id/brakedude]BrakeDude[/url], [url=https://steamcommunity.com/profiles/76561198374458982/]Sillst[/url]
+[/list]
+
+[img]https://i.imgur.com/3en8OyU.png[/img]
+[code]4Grabs, Aether, Akad, ALADAR, Andre Doruk, Blind the Bound Demon, BrakeDude, BroskiPlays, cat,,, Firework, fly_6, Gabriel, im_tem, KitsuneMedia, kittenchilly, Kotry, lambchop_is_ok, Luigi124, Michael¿?, Mr. Cross Stoney, PixelPlz, Sillst, sinbiscuit, Soaring__Sky, Swagpillar, The Demisemihemidemisemiquaver, Thicco Catto, watchmeojo[/code]
+
+[img]https://i.imgur.com/SlXbHql.png[/img] [img]https://i.imgur.com/xd2eafr.png[/img]
+[code][u]Preyn[/u] - For stylistic inspiration in the image gallery
+[u]Swagpillar[/u] - For the idea of this mod
+[u]All of you[/u] - For checking us out and supporting us :)[/code]
+
+[img]https://i.imgur.com/EDucsdc.png[/img]
+
+[img]https://i.imgur.com/OZNWMCq.png[/img] [url=https://github.com/Team-Compliance/CutMonstersPack]Cut Monsters Pack repository[/url] [img]https://i.imgur.com/OZNWMCq.png[/img]
+[img]https://i.imgur.com/xK4Mor0.png[/img] [url=https://discord.gg/GdVnkV4Gwj]TBOI: Compliance Discord Server[/url] [img]https://i.imgur.com/xK4Mor0.png[/img]
+[img]https://i.imgur.com/69jZFo8.png[/img] [url=https://www.reddit.com/r/TBOICompliance/]TBOI: Compliance Subreddit[/url] [img]https://i.imgur.com/69jZFo8.png[/img]
+[img]https://i.imgur.com/GmVPmG0.png[/img] [url=https://www.youtube.com/channel/UCEdAioGltx_hOsyDW57nvSw/featured]TBOI: Compliance YouTube[/url] [img]https://i.imgur.com/GmVPmG0.png[/img]
+[img]https://i.imgur.com/jBFg02x.png[/img] [url=https://twitter.com/ComplianceMods]TBOI: Compliance Twitter[/url] [img]https://i.imgur.com/jBFg02x.png[/img]
+[img]https://i.imgur.com/MTKQKCX.png[/img]</description>
+    <version>1.2</version>
+    <visibility>Public</visibility>
+    <tag id="Lua"/>
+    <tag id="Tweaks"/>
+</metadata>

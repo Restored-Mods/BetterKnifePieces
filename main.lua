@@ -1,4 +1,5 @@
 local mod = RegisterMod("Reward Knife Pieces", 1)
+BKP = mod
 local game = Game()
 local hadKnife1 = false
 local hadKnife2 = false
@@ -10,6 +11,8 @@ local escapeTrigger = 0
 local json = require("json")
 
 local dssdata = {}
+
+local CustomMirrorDoorNames = {"FFGMirrorDoor"}
 
 local function GetRandomDarkPoolItem(seed)
     local rng = RNG()
@@ -36,7 +39,6 @@ local function isCollectibleUnlocked(collectibleID, itemPoolOfItem)
             itemPool:AddRoomBlacklist(i)
         end
     end
-    local room = game:GetRoom()
     local isUnlocked = false
     for i = 0,50 do -- some samples to make sure
         local collID = itemPool:GetCollectible(itemPoolOfItem, false)
@@ -47,6 +49,53 @@ local function isCollectibleUnlocked(collectibleID, itemPoolOfItem)
     end
     itemPool:ResetRoomBlacklist()
     return isUnlocked
+end
+
+local function CurseLabyrinth(stage1, stage2)
+    local level = game:GetLevel()
+    local isCurseLabyrinth = level:GetCurses() & LevelCurse.CURSE_OF_LABYRINTH == LevelCurse.CURSE_OF_LABYRINTH
+    return level:GetAbsoluteStage() == stage2 and not isCurseLabyrinth or level:GetAbsoluteStage() == stage1 and isCurseLabyrinth
+end
+
+local function IsFirstKnifePieceLevel()
+    local level = game:GetLevel()
+    return level:GetStageType() == StageType.STAGETYPE_REPENTANCE or level:GetStageType() == StageType.STAGETYPE_REPENTANCE_B and CurseLabyrinth(LevelStage.STAGE1_1, LevelStage.STAGE1_2)
+    or StageAPI and StageAPI.GetCurrentStage() and StageAPI.GetCurrentStage():HasMirrorDimension()
+end
+
+local function IsSecondKnifePieceLevel()
+    local level = game:GetLevel()
+    return level:GetStageType() == StageType.STAGETYPE_REPENTANCE or level:GetStageType() == StageType.STAGETYPE_REPENTANCE_B and CurseLabyrinth(LevelStage.STAGE2_1, LevelStage.STAGE2_2)
+end
+
+local function IsMirrorWorld()
+    local room = game:GetRoom()
+    return StageAPI and StageAPI.IsMirrorDimension() or room:IsMirrorWorld()
+end
+
+local function IsThereAMirror()
+    if StageAPI and StageAPI.InOverriddenStage() and StageAPI.GetCurrentStage() then
+        for _,door in ipairs(StageAPI.GetCustomDoors()) do
+            if door.PersistentData and door.PersistentData.DoorDataName then
+                for _, name in ipairs(CustomMirrorDoorNames) do
+                    if name == door.PersistentData.DoorDataName then
+                        return true
+                    end
+                end
+            end
+        end
+    else
+        local room = game:GetRoom()
+        for i = 0,4 do
+            if room:GetDoor(i) then
+                local door = room:GetDoor(i)
+                if door.TargetRoomIndex == GridRooms.ROOM_MIRROR_IDX then
+                    return true
+                end
+            end
+        end
+    end
+    return false
 end
 
 function mod:Load(isLoad)
@@ -196,7 +245,6 @@ end
 mod:AddCallback(ModCallbacks.MC_POST_GET_COLLECTIBLE, mod.UpdateDarkPool)
 
 function mod:SpawnKnifePieces()
-    local level = game:GetLevel()
     local room = game:GetRoom()
     local itemPool = game:GetItemPool()
     anyOneHasKnifePiece1 = false
@@ -214,69 +262,62 @@ function mod:SpawnKnifePieces()
             anyHasChaos = true
         end
     end
-    if level:GetStageType() == StageType.STAGETYPE_REPENTANCE or level:GetStageType() == StageType.STAGETYPE_REPENTANCE_B then
-        local isCurseLabyrinth = level:GetCurses() & LevelCurse.CURSE_OF_LABYRINTH == LevelCurse.CURSE_OF_LABYRINTH
-        if level:GetAbsoluteStage() == LevelStage.STAGE1_2 and not isCurseLabyrinth or level:GetAbsoluteStage() == LevelStage.STAGE1_1 and isCurseLabyrinth then
-            if not room:IsMirrorWorld() then
-                for i = 0,4 do
-                    if room:GetDoor(i) then
-                        local door = room:GetDoor(i)
-                        if door.TargetRoomIndex == GridRooms.ROOM_MIRROR_IDX then
-                            if room:IsFirstVisit() and hadKnife1 and not anyOneHasKnifePiece1 then
-                                local pickup = Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_KNIFE_PIECE_1, room:GetCenterPos(), Vector.Zero,nil):ToPickup()
-                                pickup:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
-                                pickup:ClearEntityFlags(EntityFlag.FLAG_ITEM_SHOULD_DUPLICATE)
-                            elseif not hadKnife1 and anyOneHasKnifePiece1 then
-                                hadKnife1 = true
-                                mod:SaveData(json.encode({hadKnife1,hadKnife2,anyOneHasKnifePiece1,anyOneHasKnifePiece2,DarkItemPool}))
-                            end
-                            break
-                        end
-                    end
-                end            
-            elseif room:IsMirrorWorld() and room:GetType() == RoomType.ROOM_TREASURE and hadKnife1 and room:IsFirstVisit() then
-                local items = Isaac.FindByType(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_KNIFE_PIECE_1)
-                if items[1] then
-                    local item = items[1]:ToPickup()
-                    local newitem = itemPool:GetCollectible(itemPool:GetLastPool(),true,item.InitSeed)
-                    item:ToPickup():Morph(EntityType.ENTITY_PICKUP,PickupVariant.PICKUP_COLLECTIBLE, newitem,true,true)
+    
+    if IsFirstKnifePieceLevel() then
+        if not IsMirrorWorld() then
+            if IsThereAMirror() then
+                if room:IsFirstVisit() and hadKnife1 and not anyOneHasKnifePiece1 then
+                    local pickup = Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_KNIFE_PIECE_1, room:GetCenterPos(), Vector.Zero,nil):ToPickup()
+                    pickup:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+                    pickup:ClearEntityFlags(EntityFlag.FLAG_ITEM_SHOULD_DUPLICATE)
+                elseif not hadKnife1 and anyOneHasKnifePiece1 then
+                    hadKnife1 = true
+                    mod:SaveData(json.encode({hadKnife1,hadKnife2,anyOneHasKnifePiece1,anyOneHasKnifePiece2,DarkItemPool}))
                 end
             end
-        end
-        if level:GetAbsoluteStage() == LevelStage.STAGE2_2 and not isCurseLabyrinth or level:GetAbsoluteStage() == LevelStage.STAGE2_1 and isCurseLabyrinth then
-            if not room:HasCurseMist() then
-                for i = 0,4 do
-                    if room:GetDoor(i) then
-                        local door = room:GetDoor(i)
-                        if door.TargetRoomIndex == GridRooms.ROOM_MINESHAFT_IDX then
-                            if room:IsFirstVisit() and hadKnife2 and not anyOneHasKnifePiece2 then
-                                local pickup = Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_KNIFE_PIECE_2, room:GetCenterPos() + Vector(0,100), Vector.Zero,nil):ToPickup()
-                                pickup:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
-                                pickup:ClearEntityFlags(EntityFlag.FLAG_ITEM_SHOULD_DUPLICATE)
-                                break
-                            elseif not hadKnife2 and anyOneHasKnifePiece2 then
-                                hadKnife2 = true
-                                mod:SaveData(json.encode({hadKnife1,hadKnife2,anyOneHasKnifePiece1,anyOneHasKnifePiece2,DarkItemPool}))
-                            end
-                        end
-                    end
-                end
-            elseif room:HasCurseMist() and hadKnife2 and room:IsFirstVisit() then
-                local items = Isaac.FindByType(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_KNIFE_PIECE_2)
-                if items[1] then
-                    local item = items[1]:ToPickup()
-                    local newitem = GetRandomDarkPoolItem(item.InitSeed)
-                    if newitem == 0 or anyHasChaos then
-                        newitem = itemPool:GetCollectible(itemPool:GetLastPool(),true,item.InitSeed)
-                    end
-                    item:ToPickup():Morph(EntityType.ENTITY_PICKUP,PickupVariant.PICKUP_COLLECTIBLE, newitem,true,true)
-                    mscMng:Play(Music.MUSIC_MOTHERS_SHADOW_INTRO, Options.MusicVolume)
-                    escapeTrigger = 450
-                    mod:AddCallback(ModCallbacks.MC_POST_RENDER, mod.PlayEscape)
-                end
+        elseif IsMirrorWorld() and room:GetType() == RoomType.ROOM_TREASURE and hadKnife1 and room:IsFirstVisit() then
+            local items = Isaac.FindByType(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_KNIFE_PIECE_1)
+            if items[1] then
+                local item = items[1]:ToPickup()
+                local newitem = itemPool:GetCollectible(itemPool:GetLastPool(),true,item.InitSeed)
+                item:ToPickup():Morph(EntityType.ENTITY_PICKUP,PickupVariant.PICKUP_COLLECTIBLE, newitem,true,true)
             end
         end
     end
+    if IsSecondKnifePieceLevel() then
+        if not room:HasCurseMist() then
+            for i = 0,4 do
+                if room:GetDoor(i) then
+                    local door = room:GetDoor(i)
+                    if door.TargetRoomIndex == GridRooms.ROOM_MINESHAFT_IDX then
+                        if room:IsFirstVisit() and hadKnife2 and not anyOneHasKnifePiece2 then
+                            local pickup = Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_KNIFE_PIECE_2, room:GetCenterPos() + Vector(0,100), Vector.Zero,nil):ToPickup()
+                            pickup:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+                            pickup:ClearEntityFlags(EntityFlag.FLAG_ITEM_SHOULD_DUPLICATE)
+                        elseif not hadKnife2 and anyOneHasKnifePiece2 then
+                            hadKnife2 = true
+                            mod:SaveData(json.encode({hadKnife1,hadKnife2,anyOneHasKnifePiece1,anyOneHasKnifePiece2,DarkItemPool}))
+                        end
+                        break
+                    end
+                end
+            end
+        elseif room:HasCurseMist() and hadKnife2 and room:IsFirstVisit() then
+            local items = Isaac.FindByType(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_KNIFE_PIECE_2)
+            if items[1] then
+                local item = items[1]:ToPickup()
+                local newitem = GetRandomDarkPoolItem(item.InitSeed)
+                if newitem == 0 or anyHasChaos then
+                    newitem = itemPool:GetCollectible(itemPool:GetLastPool(),true,item.InitSeed)
+                end
+                item:ToPickup():Morph(EntityType.ENTITY_PICKUP,PickupVariant.PICKUP_COLLECTIBLE, newitem,true,true)
+                mscMng:Play(Music.MUSIC_MOTHERS_SHADOW_INTRO, Options.MusicVolume)
+                escapeTrigger = 450
+                mod:AddCallback(ModCallbacks.MC_POST_RENDER, mod.PlayEscape)
+            end
+        end
+    end
+    
 end
 mod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, mod.SpawnKnifePieces)
 
