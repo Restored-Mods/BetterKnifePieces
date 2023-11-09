@@ -319,7 +319,7 @@ function mod:SpawnKnifePieces()
     end
     
 end
-mod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, mod.SpawnKnifePieces)
+mod:AddPriorityCallback(ModCallbacks.MC_POST_NEW_ROOM, CallbackPriority.LATE, mod.SpawnKnifePieces)
 
 
 --
