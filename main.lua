@@ -6,7 +6,7 @@ local hadKnife2 = false
 local anyOneHasKnifePiece1 = false
 local anyOneHasKnifePiece2 = false
 local DarkItemPool = {}
-local mscMng = MusicManager()
+local mscMng = (MMC and MMC.Manager or MusicManager)()
 local escapeTrigger = 0
 local json = require("json")
 
