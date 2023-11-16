@@ -268,6 +268,7 @@ function mod:SpawnKnifePieces()
             if IsThereAMirror() then
                 if room:IsFirstVisit() and hadKnife1 and not anyOneHasKnifePiece1 then
                     local pickup = Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_KNIFE_PIECE_1, room:GetCenterPos(), Vector.Zero,nil):ToPickup()
+                    pickup:Morph(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_KNIFE_PIECE_1, true, true, true)
                     pickup:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
                     pickup:ClearEntityFlags(EntityFlag.FLAG_ITEM_SHOULD_DUPLICATE)
                 elseif not hadKnife1 and anyOneHasKnifePiece1 then
@@ -292,6 +293,7 @@ function mod:SpawnKnifePieces()
                     if door.TargetRoomIndex == GridRooms.ROOM_MINESHAFT_IDX then
                         if room:IsFirstVisit() and hadKnife2 and not anyOneHasKnifePiece2 then
                             local pickup = Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_KNIFE_PIECE_2, room:GetCenterPos() + Vector(0,100), Vector.Zero,nil):ToPickup()
+                            pickup:Morph(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_KNIFE_PIECE_2, true, true, true)
                             pickup:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
                             pickup:ClearEntityFlags(EntityFlag.FLAG_ITEM_SHOULD_DUPLICATE)
                         elseif not hadKnife2 and anyOneHasKnifePiece2 then
