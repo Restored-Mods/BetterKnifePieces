@@ -559,6 +559,32 @@ local bkpdirectorykey = {
     Path = {},
 }
 
+local OldTimer
+
+local function FreezeGame(unfreeze) --Encyclopedia function, Thanks AgentCucco
+	if unfreeze then
+		OldTimer = nil
+	else
+		if not OldTimer then
+			OldTimer = Game().TimeCounter
+		end
+		
+        Isaac.GetPlayer(0):UseActiveItem(CollectibleType.COLLECTIBLE_PAUSE, UseFlag.USE_NOANIM)
+		
+		Game().TimeCounter = OldTimer
+	end
+end
+
+local function RunDSSMenu(tbl)
+    FreezeGame()
+    dssmod.runMenu(tbl)
+end
+
+local function CloseDSSMenu(tbl, fullClose, noAnimate)
+    FreezeGame(true)
+    dssmod.closeMenu(tbl, fullClose, noAnimate)
+end
+
 DeadSeaScrollsMenu.AddMenu("Better Knife Pieces", {
     -- The Run, Close, and Open functions define the core loop of your menu
     -- Once your menu is opened, all the work is shifted off to your mod running these functions, so each mod can have its own independently functioning menu.
@@ -567,11 +593,11 @@ DeadSeaScrollsMenu.AddMenu("Better Knife Pieces", {
     -- But, if you did want a completely custom menu, this would be the way to do it!
     
     -- This function runs every render frame while your menu is open, it handles everything! Drawing, inputs, etc.
-    Run = dssmod.runMenu,
+    Run = RunDSSMenu,
     -- This function runs when the menu is opened, and generally initializes the menu.
     Open = dssmod.openMenu,
     -- This function runs when the menu is closed, and generally handles storing of save data / general shut down.
-    Close = dssmod.closeMenu,
+    Close = CloseDSSMenu,
 
     -- If UseSubMenu is set to true, when other mods with UseSubMenu set to false / nil are enabled, your menu will be hidden behind an "Other Mods" button.
     -- A good idea to use to help keep menus clean if you don't expect players to use your menu very often!
