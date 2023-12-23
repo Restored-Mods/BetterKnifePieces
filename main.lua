@@ -559,11 +559,44 @@ local bkpdirectorykey = {
     Path = {},
 }
 
+--#region AgentCucco pause manager for DSS
 local OldTimer
+local OverwrittenPause = false
+local AddedPauseCallback = false
+local function OverridePause(self, player, hook, action)
+	if not AddedPauseCallback then return nil end
 
-local function FreezeGame(unfreeze) --Encyclopedia function, Thanks AgentCucco
+	if OverwrittenPause then
+		OverwrittenPause = false
+		AddedPauseCallback = false
+		return
+	end
+
+	if action == ButtonAction.ACTION_SHOOTRIGHT then
+		OverwrittenPause = true
+		for _, ember in ipairs(Isaac.FindByType(EntityType.ENTITY_EFFECT, EffectVariant.FALLING_EMBER, -1)) do
+			if ember:Exists() then
+				ember:Remove()
+			end
+		end
+		if REPENTANCE then
+			for _, rain in ipairs(Isaac.FindByType(EntityType.ENTITY_EFFECT, EffectVariant.RAIN_DROP, -1)) do
+				if rain:Exists() then
+					rain:Remove()
+				end
+			end
+		end
+		return 0.75
+	end
+end
+mod:AddCallback(ModCallbacks.MC_INPUT_ACTION, OverridePause, InputHook.IS_ACTION_PRESSED)
+
+local function FreezeGame(unfreeze)
 	if unfreeze then
 		OldTimer = nil
+        if not AddedPauseCallback then
+			AddedPauseCallback = true
+		end
 	else
 		if not OldTimer then
 			OldTimer = Game().TimeCounter
@@ -584,6 +617,8 @@ local function CloseDSSMenu(tbl, fullClose, noAnimate)
     FreezeGame(true)
     dssmod.closeMenu(tbl, fullClose, noAnimate)
 end
+
+--#endregion
 
 DeadSeaScrollsMenu.AddMenu("Better Knife Pieces", {
     -- The Run, Close, and Open functions define the core loop of your menu
