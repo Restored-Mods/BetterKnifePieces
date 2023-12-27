@@ -561,6 +561,8 @@ local bkpdirectorykey = {
 
 --#region AgentCucco pause manager for DSS
 local OldTimer
+local OldTimerBossRush
+local OldTimerHush
 local OverwrittenPause = false
 local AddedPauseCallback = false
 local function OverridePause(self, player, hook, action)
@@ -594,6 +596,8 @@ mod:AddCallback(ModCallbacks.MC_INPUT_ACTION, OverridePause, InputHook.IS_ACTION
 local function FreezeGame(unfreeze)
 	if unfreeze then
 		OldTimer = nil
+        OldTimerBossRush = nil
+        OldTimerHush = nil
         if not AddedPauseCallback then
 			AddedPauseCallback = true
 		end
@@ -601,10 +605,18 @@ local function FreezeGame(unfreeze)
 		if not OldTimer then
 			OldTimer = Game().TimeCounter
 		end
+        if not OldTimerBossRush then
+            OldTimerBossRush = Game().BossRushParTime
+		end
+        if not OldTimerHush then
+			OldTimerHush = Game().BlueWombParTime
+		end
 		
         Isaac.GetPlayer(0):UseActiveItem(CollectibleType.COLLECTIBLE_PAUSE, UseFlag.USE_NOANIM)
 		
 		Game().TimeCounter = OldTimer
+		Game().BossRushParTime = OldTimerBossRush
+		Game().BlueWombParTime = OldTimerHush
 	end
 end
 
