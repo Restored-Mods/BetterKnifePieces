@@ -66,6 +66,7 @@ end
 local function IsSecondKnifePieceLevel()
     local level = game:GetLevel()
     return level:GetStageType() == StageType.STAGETYPE_REPENTANCE or level:GetStageType() == StageType.STAGETYPE_REPENTANCE_B and CurseLabyrinth(LevelStage.STAGE2_1, LevelStage.STAGE2_2)
+    or StageAPI and StageAPI.GetCurrentStage() and StageAPI.GetCurrentStage():HasMineshaftDimension()
 end
 
 local function IsMirrorWorld()
@@ -75,13 +76,9 @@ end
 
 local function IsThereAMirror()
     if StageAPI and StageAPI.InOverriddenStage() and StageAPI.GetCurrentStage() then
-        for _,door in ipairs(StageAPI.GetCustomDoors()) do
-            if door.PersistentData and door.PersistentData.DoorDataName then
-                for _, name in ipairs(CustomMirrorDoorNames) do
-                    if name == door.PersistentData.DoorDataName then
-                        return true
-                    end
-                end
+        for _, name in ipairs(CustomMirrorDoorNames) do
+            if #StageAPI.GetCustomDoorData(name) > 0 then
+                return true
             end
         end
     else
@@ -250,16 +247,22 @@ function mod:SpawnKnifePieces()
     anyOneHasKnifePiece1 = false
     anyOneHasKnifePiece2 = false
     local anyHasChaos = false
-    for _,p in ipairs(Isaac.FindByType(EntityType.ENTITY_PLAYER,-1,-1)) do
-        p = p:ToPlayer()
-        if p:HasCollectible(CollectibleType.COLLECTIBLE_KNIFE_PIECE_1) then
-            anyOneHasKnifePiece1 = true
-        end
-        if p:HasCollectible(CollectibleType.COLLECTIBLE_KNIFE_PIECE_2) then
-            anyOneHasKnifePiece2 = true
-        end
-        if p:HasCollectible(CollectibleType.COLLECTIBLE_CHAOS) then
-            anyHasChaos = true
+    if REPENTOGON then
+        anyOneHasKnifePiece1 = PlayerManager.AnyoneHasCollectible(CollectibleType.COLLECTIBLE_KNIFE_PIECE_1)
+        anyOneHasKnifePiece2 = PlayerManager.AnyoneHasCollectible(CollectibleType.COLLECTIBLE_KNIFE_PIECE_2)
+        anyOneHasKnifePiece1 = PlayerManager.AnyoneHasCollectible(CollectibleType.COLLECTIBLE_CHAOS)
+    else
+        for _,p in ipairs(Isaac.FindByType(EntityType.ENTITY_PLAYER,-1,-1)) do
+            p = p:ToPlayer()
+            if p:HasCollectible(CollectibleType.COLLECTIBLE_KNIFE_PIECE_1) then
+                anyOneHasKnifePiece1 = true
+            end
+            if p:HasCollectible(CollectibleType.COLLECTIBLE_KNIFE_PIECE_2) then
+                anyOneHasKnifePiece2 = true
+            end
+            if p:HasCollectible(CollectibleType.COLLECTIBLE_CHAOS) then
+                anyHasChaos = true
+            end
         end
     end
     
@@ -321,12 +324,56 @@ function mod:SpawnKnifePieces()
     end
     
 end
-mod:AddPriorityCallback(ModCallbacks.MC_POST_NEW_ROOM, CallbackPriority.LATE, mod.SpawnKnifePieces)
+mod:AddPriorityCallback(ModCallbacks.MC_POST_NEW_ROOM, 999, mod.SpawnKnifePieces)
 
 
---
--- MenuProvider
---
+if REPENTOGON then
+
+    function mod:SaveSlotLoaded()
+        if mod:HasData() then
+            local load = json.decode(mod:LoadData())
+            hadKnife1 = load[1]
+            hadKnife2 = load[2]
+        end
+    end
+    mod:AddCallback(ModCallbacks.MC_POST_SAVESLOT_LOAD, mod.SaveSlotLoaded)
+
+    if not ImGui.ElementExists("tcMods") then
+        ImGui.CreateMenu("tcMods", "TC Mods")
+    end
+
+    if not ImGui.ElementExists("betterKnifePieces") then
+        ImGui.AddElement("tcMods", "betterKnifePieces", ImGuiElement.MenuItem, "Better Knife Pieces")
+    end
+
+    if not ImGui.ElementExists("betterKnifePiecesWindow") then
+        ImGui.CreateWindow("betterKnifePiecesWindow", "Better Knife Pieces")
+    end
+
+    ImGui.LinkWindowToElement("betterKnifePiecesWindow", "betterKnifePieces")
+    ImGui.SetWindowSize("betterKnifePiecesWindow", 350, 170)
+
+    if ImGui.ElementExists("betterKnifePiecesCollected1") then
+        ImGui.RemoveElement("betterKnifePiecesCollected1")
+    end
+
+    ImGui.AddCheckbox("betterKnifePiecesWindow", "betterKnifePiecesCollected1", "Knife Piece 1 collected", function(val)
+        hadKnife1 = val
+    end, false)
+
+    if ImGui.ElementExists("betterKnifePiecesCollected2") then
+        ImGui.RemoveElement("betterKnifePiecesCollected2")
+    end
+
+    ImGui.AddCheckbox("betterKnifePiecesWindow", "betterKnifePiecesCollected2", "Knife Piece 2 collected", function(val)
+        hadKnife2 = val
+    end, false)
+
+    ImGui.AddCallback("betterKnifePiecesWindow", ImGuiCallback.Render, function()
+        ImGui.UpdateData("betterKnifePiecesCollected1", ImGuiData.Value, hadKnife1)
+        ImGui.UpdateData("betterKnifePiecesCollected2", ImGuiData.Value, hadKnife2)
+    end)
+end
 
 -- Change this variable to match your mod. The standard is "Dead Sea Scrolls (Mod Name)"
 local DSSModName = "Dead Sea Scrolls (Better Knife Pieces)"
