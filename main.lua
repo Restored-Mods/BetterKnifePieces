@@ -15,15 +15,26 @@ local dssdata = {}
 local CustomMirrorDoorNames = {"FFGMirrorDoor"}
 
 local function GetRandomDarkPoolItem(seed)
-    local rng = RNG()
-    if seed and type(seed) == "number" then
-        rng:SetSeed(seed,35)
-    end
     local newt = 0
-    if #DarkItemPool > 0 then
-        local idx = rng:RandomInt(#DarkItemPool) + 1
-        newt = DarkItemPool[idx]
-        table.remove(DarkItemPool,idx)
+    if REPENTOGON then
+        local pool = Isaac.GetPoolIdByName("dark mineshaft")
+        newt = game:GetItemPool():GetCollectible(pool, true, seed)
+        for idx,col in ipairs(DarkItemPool) do
+            if col == newt then
+                table.remove(DarkItemPool, idx)
+            end
+        end
+    else
+        local rng = RNG()
+        if seed and type(seed) == "number" then
+            rng:SetSeed(seed,35)
+        end
+        
+        if #DarkItemPool > 0 then
+            local idx = rng:RandomInt(#DarkItemPool) + 1
+            newt = DarkItemPool[idx]
+            table.remove(DarkItemPool,idx)
+        end
     end
     return newt
 end
@@ -114,7 +125,7 @@ function mod:Load(isLoad)
         CollectibleType.COLLECTIBLE_20_20,
         CollectibleType.COLLECTIBLE_LUMP_OF_COAL,
         CollectibleType.COLLECTIBLE_BALL_OF_TAR,
-        CollectibleType.COLLECTIBLE_BFF,
+        CollectibleType.COLLECTIBLE_BBF,
         CollectibleType.COLLECTIBLE_BLACK_CANDLE,
         CollectibleType.COLLECTIBLE_BLACK_LOTUS,
         CollectibleType.COLLECTIBLE_BOBBY_BOMB,
@@ -250,7 +261,7 @@ function mod:SpawnKnifePieces()
     if REPENTOGON then
         anyOneHasKnifePiece1 = PlayerManager.AnyoneHasCollectible(CollectibleType.COLLECTIBLE_KNIFE_PIECE_1)
         anyOneHasKnifePiece2 = PlayerManager.AnyoneHasCollectible(CollectibleType.COLLECTIBLE_KNIFE_PIECE_2)
-        anyOneHasKnifePiece1 = PlayerManager.AnyoneHasCollectible(CollectibleType.COLLECTIBLE_CHAOS)
+        anyHasChaos = PlayerManager.AnyoneHasCollectible(CollectibleType.COLLECTIBLE_CHAOS)
     else
         for _,p in ipairs(Isaac.FindByType(EntityType.ENTITY_PLAYER,-1,-1)) do
             p = p:ToPlayer()
@@ -328,7 +339,6 @@ mod:AddPriorityCallback(ModCallbacks.MC_POST_NEW_ROOM, 999, mod.SpawnKnifePieces
 
 
 if REPENTOGON then
-
     function mod:SaveSlotLoaded()
         if mod:HasData() then
             local load = json.decode(mod:LoadData())

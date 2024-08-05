@@ -1,0 +1,176 @@
+<ItemPools>
+	<Pool Name="dark mineshaft">
+        <!--Halo of Flies-->
+		<Item Id="10" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+		<!--The Book of Belial-->
+		<Item Id="34" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Steven-->
+		<Item Id="50" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Distant Admiration-->
+		<Item Id="57" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Charm of the Vampire-->
+		<Item Id="62" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Dead Cat-->
+		<Item Id="81" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Loki's Horns-->
+		<Item Id="87" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Spider Bite-->
+		<Item Id="89" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--The Book of Sin-->
+		<Item Id="97" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Little Gish-->
+		<Item Id="99" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Little Steven-->
+		<Item Id="100" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Demon Baby-->
+		<Item Id="113" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Dead Bird-->
+		<Item Id="117" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Bobby-Bomb-->
+		<Item Id="125" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--A Pony-->
+		<Item Id="130" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--A Lump of Coal-->
+		<Item Id="132" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Guppy's Paw-->
+		<Item Id="133" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+		<!--Guppy's Tail-->
+		<Item Id="134" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+		<!--Guppy's Head-->
+		<Item Id="145" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Celtic Cross-->
+		<Item Id="162" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Cat-o-nine-tails-->
+		<Item Id="165" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--The Black Bean-->
+		<Item Id="180" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Pyro-->
+		<Item Id="190" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Magic 8 Ball-->
+		<Item Id="194" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Ceremonial Robes-->
+		<Item Id="216" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Sad Bombs-->
+		<Item Id="220" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Gimpy-->
+		<Item Id="225" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Black Lotus-->
+		<Item Id="226" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Ball of Tar-->
+		<Item Id="231" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Death's Touch-->
+		<Item Id="237" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--20/20-->
+		<Item Id="245" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Black Candle-->
+		<Item Id="260" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Leech-->
+		<Item Id="270" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--BBF-->
+		<Item Id="272" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Lil Brimstone-->
+		<Item Id="275" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Dark Bum-->
+		<Item Id="278" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Eve's Mascara-->
+		<Item Id="310" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Judas' Shadow-->
+		<Item Id="311" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Strange Attractor-->
+		<Item Id="315" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Samson's Chains-->
+		<Item Id="321" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Car Battery-->
+		<Item Id="356" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Incubus-->
+		<Item Id="360" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Scatter Bombs-->
+		<Item Id="366" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Spear Of Destiny-->
+		<Item Id="400" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--D8-->
+		<Item Id="406" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Athame-->
+		<Item Id="408" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Empty Vessel-->
+		<Item Id="409" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Succubus-->
+		<Item Id="417" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Black Powder-->
+		<Item Id="420" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--My Shadow-->
+		<Item Id="433" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Mega Blast-->
+		<Item Id="441" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Dark Prince's Crown-->
+		<Item Id="442" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Analog Stick-->
+		<Item Id="465" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Clicker-->
+		<Item Id="482" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Mama Mega!-->
+		<Item Id="483" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Euthanasia-->
+		<Item Id="496" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Little Horn-->
+		<Item Id="503" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Poke Go-->
+		<Item Id="505" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Broken Modem-->
+		<Item Id="514" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Fast Bombs-->
+		<Item Id="517" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Jumper Cables-->
+		<Item Id="520" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Flat Stone-->
+		<Item Id="540" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Book of the Dead-->
+		<Item Id="545" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--The Intruder-->
+		<Item Id="575" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Wavy Cap-->
+		<Item Id="582" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Rocket in a Jar-->
+		<Item Id="583" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Lodestone-->
+		<Item Id="617" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Tinytoma-->
+		<Item Id="645" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Brimstone Bombs-->
+		<Item Id="646" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--4.5 Volt-->
+		<Item Id="647" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Quints-->
+		<Item Id="661" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Tooth and Nail-->
+		<Item Id="663" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--A Pound of Flesh-->
+		<Item Id="672" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Empty Heart-->
+		<Item Id="676" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Lil Abaddon-->
+		<Item Id="679" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Lil Portal-->
+		<Item Id="681" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--The Swarm-->
+		<Item Id="693" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Twisted Pair-->
+		<Item Id="698" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Azazel's Rage-->
+		<Item Id="699" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Isaac's Tomb-->
+		<Item Id="701" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Stapler-->
+		<Item Id="708" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Lemegeton-->
+		<Item Id="712" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Keeper's Sack-->
+		<Item Id="716" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+		<!--Keeper's Kin-->
+		<Item Id="717" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Anima Sola-->
+		<Item Id="722" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+        <!--Spindown Dice-->
+		<Item Id="723" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+	</Pool>
+</ItemPools>
