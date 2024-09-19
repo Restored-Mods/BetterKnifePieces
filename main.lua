@@ -3,11 +3,11 @@ BKP = mod
 local game = Game()
 local hadKnife1 = false
 local hadKnife2 = false
+local doKnifeCollecting = true
 local anyOneHasKnifePiece1 = false
 local anyOneHasKnifePiece2 = false
 local DarkItemPool = {}
 local mscMng = (MMC and MMC.Manager or MusicManager)()
-local escapeTrigger = 0
 local json = require("json")
 
 local dssdata = {}
@@ -228,18 +228,9 @@ end
 mod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, mod.Load)
 
 function mod:Save(isSave)
-    mod:SaveData(json.encode({hadKnife1,hadKnife2,anyOneHasKnifePiece1,anyOneHasKnifePiece2,DarkItemPool,dssdata}))
+    mod:SaveData(json.encode({hadKnife1,hadKnife2,anyOneHasKnifePiece1,anyOneHasKnifePiece2,DarkItemPool,dssdata,doKnifeCollecting}))
 end
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, mod.Save)
-
-function mod:PlayEscape()
-    if escapeTrigger > 0 then
-        escapeTrigger = escapeTrigger - 1
-    else
-        mscMng:Play(Music.MUSIC_MINESHAFT_ESCAPE, Options.MusicVolume)
-        mod:RemoveCallback(ModCallbacks.MC_POST_RENDER,mod.PlayEscape)
-    end
-end
 
 function mod:UpdateDarkPool(id,itempool,decrease,seed)
     for i = 1, #DarkItemPool do
@@ -252,9 +243,7 @@ function mod:UpdateDarkPool(id,itempool,decrease,seed)
 end
 mod:AddCallback(ModCallbacks.MC_POST_GET_COLLECTIBLE, mod.UpdateDarkPool)
 
-function mod:SpawnKnifePieces()
-    local room = game:GetRoom()
-    local itemPool = game:GetItemPool()
+local function UpdateCurrentCollectibles()
     anyOneHasKnifePiece1 = false
     anyOneHasKnifePiece2 = false
     local anyHasChaos = false
@@ -276,7 +265,19 @@ function mod:SpawnKnifePieces()
             end
         end
     end
+    return anyHasChaos
+end
+
+function mod:SpawnKnifePieces()
+    if REPENTOGON then
+        hadKnife1 = Isaac.GetPersistentGameData():IsItemInCollection(CollectibleType.COLLECTIBLE_KNIFE_PIECE_1)
+        hadKnife2 = Isaac.GetPersistentGameData():IsItemInCollection(CollectibleType.COLLECTIBLE_KNIFE_PIECE_2)
+        if not doKnifeCollecting then return end
+    end 
+    local room = game:GetRoom()
+    local itemPool = game:GetItemPool()
     
+    local anyHasChaos = UpdateCurrentCollectibles()
     if IsFirstKnifePieceLevel() then
         if not IsMirrorWorld() then
             if IsThereAMirror() then
@@ -287,7 +288,7 @@ function mod:SpawnKnifePieces()
                     pickup:ClearEntityFlags(EntityFlag.FLAG_ITEM_SHOULD_DUPLICATE)
                 elseif not hadKnife1 and anyOneHasKnifePiece1 then
                     hadKnife1 = true
-                    mod:SaveData(json.encode({hadKnife1,hadKnife2,anyOneHasKnifePiece1,anyOneHasKnifePiece2,DarkItemPool}))
+                    mod:SaveData(json.encode({hadKnife1,hadKnife2,anyOneHasKnifePiece1,anyOneHasKnifePiece2,DarkItemPool,dssdata,doKnifeCollecting}))
                 end
             end
         elseif IsMirrorWorld() and room:GetType() == RoomType.ROOM_TREASURE and hadKnife1 and room:IsFirstVisit() then
@@ -312,7 +313,7 @@ function mod:SpawnKnifePieces()
                             pickup:ClearEntityFlags(EntityFlag.FLAG_ITEM_SHOULD_DUPLICATE)
                         elseif not hadKnife2 and anyOneHasKnifePiece2 then
                             hadKnife2 = true
-                            mod:SaveData(json.encode({hadKnife1,hadKnife2,anyOneHasKnifePiece1,anyOneHasKnifePiece2,DarkItemPool}))
+                            mod:SaveData(json.encode({hadKnife1,hadKnife2,anyOneHasKnifePiece1,anyOneHasKnifePiece2,DarkItemPool,dssdata,doKnifeCollecting}))
                         end
                         break
                     end
@@ -328,8 +329,7 @@ function mod:SpawnKnifePieces()
                 end
                 item:ToPickup():Morph(EntityType.ENTITY_PICKUP,PickupVariant.PICKUP_COLLECTIBLE, newitem,true,true)
                 mscMng:Play(Music.MUSIC_MOTHERS_SHADOW_INTRO, Options.MusicVolume)
-                escapeTrigger = 450
-                mod:AddCallback(ModCallbacks.MC_POST_RENDER, mod.PlayEscape)
+                mscMng:Queue(Music.MUSIC_MINESHAFT_ESCAPE)
             end
         end
     end
@@ -337,13 +337,13 @@ function mod:SpawnKnifePieces()
 end
 mod:AddPriorityCallback(ModCallbacks.MC_POST_NEW_ROOM, 999, mod.SpawnKnifePieces)
 
-
 if REPENTOGON then
     function mod:SaveSlotLoaded()
         if mod:HasData() then
             local load = json.decode(mod:LoadData())
-            hadKnife1 = load[1]
-            hadKnife2 = load[2]
+            --hadKnife1 = load[1]
+            --hadKnife2 = load[2]
+            doKnifeCollecting = load[7] ~= nil and load[7] or true
         end
     end
     mod:AddCallback(ModCallbacks.MC_POST_SAVESLOT_LOAD, mod.SaveSlotLoaded)
@@ -361,9 +361,9 @@ if REPENTOGON then
     end
 
     ImGui.LinkWindowToElement("betterKnifePiecesWindow", "betterKnifePieces")
-    ImGui.SetWindowSize("betterKnifePiecesWindow", 350, 170)
+    ImGui.SetWindowSize("betterKnifePiecesWindow", 500, 100)
 
-    if ImGui.ElementExists("betterKnifePiecesCollected1") then
+    --[[if ImGui.ElementExists("betterKnifePiecesCollected1") then
         ImGui.RemoveElement("betterKnifePiecesCollected1")
     end
 
@@ -377,11 +377,22 @@ if REPENTOGON then
 
     ImGui.AddCheckbox("betterKnifePiecesWindow", "betterKnifePiecesCollected2", "Knife Piece 2 collected", function(val)
         hadKnife2 = val
-    end, false)
+    end, false)]]
+
+    if ImGui.ElementExists("betterKnifePiecesDoCollection") then
+        ImGui.RemoveElement("betterKnifePiecesDoCollection")
+    end
+
+    ImGui.AddCheckbox("betterKnifePiecesWindow", "betterKnifePiecesDoCollection", "Spawn unlocked knife pieces", function(val)
+        doKnifeCollecting = val
+    end, true)
+
+    ImGui.SetHelpmarker("betterKnifePiecesDoCollection", "Spawn knife pieces in rooms with entrance to mirror world and mineshaft")
 
     ImGui.AddCallback("betterKnifePiecesWindow", ImGuiCallback.Render, function()
-        ImGui.UpdateData("betterKnifePiecesCollected1", ImGuiData.Value, hadKnife1)
-        ImGui.UpdateData("betterKnifePiecesCollected2", ImGuiData.Value, hadKnife2)
+        --ImGui.UpdateData("betterKnifePiecesCollected1", ImGuiData.Value, hadKnife1)
+        --ImGui.UpdateData("betterKnifePiecesCollected2", ImGuiData.Value, hadKnife2)
+        ImGui.UpdateData("betterKnifePiecesDoCollection", ImGuiData.Value, doKnifeCollecting)
     end)
 end
 
@@ -477,6 +488,109 @@ local dssmod = DSSInitializerFunction(DSSModName, DSSCoreVersion, MenuProvider)
 
 -- Adding a Menu
 
+local function RepentOptions()
+    local buttons = {
+        dssmod.gamepadToggleButton,
+        dssmod.menuKeybindButton,
+        dssmod.paletteButton,
+        dssmod.menuHintButton,
+        dssmod.menuBuzzerButton,
+    }
+    if REPENTOGON then
+        buttons[#buttons + 1] = {
+            strset = {'spawn collected', 'knife pieces'},
+            -- The "choices" tag on a button allows you to create a multiple-choice setting
+            choices = {'disabled', 'enabled'},
+            -- The "setting" tag determines the default setting, by list index. EG "1" here will result in the default setting being "choice a"
+            setting = 2,
+
+            -- "variable" is used as a key to story your setting; just set it to something unique for each setting!
+            variable = 'doKnifeCollecting',
+            
+            -- When the menu is opened, "load" will be called on all settings-buttons
+            -- The "load" function for a button should return what its current setting should be
+            -- This generally means looking at your mod's save data, and returning whatever setting you have stored
+            load = function()
+                return doKnifeCollecting and 2 or 1
+            end,
+
+            -- When the menu is closed, "store" will be called on all settings-buttons
+            -- The "store" function for a button should save the button's setting (passed in as the first argument) to save data!
+            store = function(var)
+                doKnifeCollecting = var == 2
+            end,
+
+            -- A simple way to define tooltips is using the "strset" tag, where each string in the table is another line of the tooltip
+            tooltip = {strset = {'spawn', 'collected', 'knife pieces in', 'rooms with', 'entrances to', 'mirror world', 'and mineshaft'}, fsize=2}
+        }
+    else
+        buttons[#buttons + 1] = {
+            str = 'knife piece 1',
+
+            -- The "choices" tag on a button allows you to create a multiple-choice setting
+            choices = {'was not collected', 'was collected'},
+            -- The "setting" tag determines the default setting, by list index. EG "1" here will result in the default setting being "choice a"
+            setting = 1,
+
+            -- "variable" is used as a key to story your setting; just set it to something unique for each setting!
+            variable = 'hadKnife1',
+            
+            -- When the menu is opened, "load" will be called on all settings-buttons
+            -- The "load" function for a button should return what its current setting should be
+            -- This generally means looking at your mod's save data, and returning whatever setting you have stored
+            load = function()
+                return hadKnife1 and 2 or 1
+            end,
+
+            -- When the menu is closed, "store" will be called on all settings-buttons
+            -- The "store" function for a button should save the button's setting (passed in as the first argument) to save data!
+            store = function(var)
+                if var == 1 then
+                    hadKnife1 = false
+                    hadKnife2 = false
+                else
+                    hadKnife1 = true
+                end
+            end,
+
+            -- A simple way to define tooltips is using the "strset" tag, where each string in the table is another line of the tooltip
+            tooltip = {strset = {'option for', 'knife piece 1.', 'this option', ' will affect','\'knife piece 2\'', 'option below','when leaving', 'dss menu'}}
+        }
+
+        buttons[#buttons + 1] = {
+            str = 'knife piece 2',
+
+            -- The "choices" tag on a button allows you to create a multiple-choice setting
+            choices = {'was not collected', 'was collected'},
+            -- The "setting" tag determines the default setting, by list index. EG "1" here will result in the default setting being "choice a"
+            setting = 1,
+
+            -- "variable" is used as a key to story your setting; just set it to something unique for each setting!
+            variable = 'hadKnife2',
+            
+            -- When the menu is opened, "load" will be called on all settings-buttons
+            -- The "load" function for a button should return what its current setting should be
+            -- This generally means looking at your mod's save data, and returning whatever setting you have stored
+            load = function()
+                return hadKnife2 and 2 or 1
+            end,
+
+            -- When the menu is closed, "store" will be called on all settings-buttons
+            -- The "store" function for a button should save the button's setting (passed in as the first argument) to save data!
+            store = function(var)
+                if var == 1 or not hadKnife1 then
+                    hadKnife2 = false
+                else
+                    hadKnife2 = true
+                end
+            end,
+
+            -- A simple way to define tooltips is using the "strset" tag, where each string in the table is another line of the tooltip
+            tooltip = {strset = {'option for', 'knife piece 2.', 'this option','can be set to', '\'was collected\'', 'only when', '\'knife piece 1\'','option set to', '\'was collected\''}}
+        }
+    end
+    return buttons
+end
 
 -- Creating a menu like any other DSS menu is a simple process.
 -- You need a "Directory", which defines all of the pages ("items") that can be accessed on your menu, and a "DirectoryKey", which defines the state of the menu.
@@ -516,91 +630,7 @@ local bkpdirectory = {
     },
     settings = {
         title = 'settings',
-        buttons = {
-            -- These buttons are all generic menu handling buttons, provided in the table returned from DSSInitializerFunction
-            -- They'll only show up if your menu is the only mod menu active
-            -- You should generally include them somewhere in your menu, so that players can change the palette or menu keybind even if your mod is the only menu mod active.
-            -- You can position them however you like, though!
-            dssmod.gamepadToggleButton,
-            dssmod.menuKeybindButton,
-            dssmod.paletteButton,
-            dssmod.menuHintButton,
-            dssmod.menuBuzzerButton,
-
-            {
-                str = 'knife piece 1',
-
-                -- The "choices" tag on a button allows you to create a multiple-choice setting
-                choices = {'was not collected', 'was collected'},
-                -- The "setting" tag determines the default setting, by list index. EG "1" here will result in the default setting being "choice a"
-                setting = 1,
-
-                -- "variable" is used as a key to story your setting; just set it to something unique for each setting!
-                variable = 'hadKnife1',
-                
-                -- When the menu is opened, "load" will be called on all settings-buttons
-                -- The "load" function for a button should return what its current setting should be
-                -- This generally means looking at your mod's save data, and returning whatever setting you have stored
-                load = function()
-                    return hadKnife1 and 2 or 1
-                end,
-
-                -- When the menu is closed, "store" will be called on all settings-buttons
-                -- The "store" function for a button should save the button's setting (passed in as the first argument) to save data!
-                store = function(var)
-                    if var == 1 then
-                        hadKnife1 = false
-                        hadKnife2 = false
-                    else
-                        hadKnife1 = true
-                    end
-                end,
-
-                -- A simple way to define tooltips is using the "strset" tag, where each string in the table is another line of the tooltip
-                tooltip = {strset = {'option for', 'knife piece 1.', 'this option', ' will affect','\'knife piece 2\'', 'option below','when leaving', 'dss menu'}}
-            },
-
-            {
-                str = 'knife piece 2',
-
-                -- The "choices" tag on a button allows you to create a multiple-choice setting
-                choices = {'was not collected', 'was collected'},
-                -- The "setting" tag determines the default setting, by list index. EG "1" here will result in the default setting being "choice a"
-                setting = 1,
-
-                -- "variable" is used as a key to story your setting; just set it to something unique for each setting!
-                variable = 'hadKnife2',
-                
-                -- When the menu is opened, "load" will be called on all settings-buttons
-                -- The "load" function for a button should return what its current setting should be
-                -- This generally means looking at your mod's save data, and returning whatever setting you have stored
-                load = function()
-                    return hadKnife2 and 2 or 1
-                end,
-
-                -- When the menu is closed, "store" will be called on all settings-buttons
-                -- The "store" function for a button should save the button's setting (passed in as the first argument) to save data!
-                store = function(var)
-                    if var == 1 or not hadKnife1 then
-                        hadKnife2 = false
-                    else
-                        hadKnife2 = true
-                    end
-                end,
-
-                -- A simple way to define tooltips is using the "strset" tag, where each string in the table is another line of the tooltip
-                tooltip = {strset = {'option for', 'knife piece 2.', 'this option','can be set to', '\'was collected\'', 'only when', '\'knife piece 1\'','option set to', '\'was collected\''}}
-            },
-
-            {
-                -- Creating gaps in your page can be done simply by inserting a blank button.
-                -- The "nosel" tag will make it impossible to select, so it'll be skipped over when traversing the menu, while still rendering!
-                str = '',
-                fsize = 2,
-                nosel = true
-            },
-           
-        }
+        buttons = RepentOptions()
     }
 }
 
@@ -617,6 +647,21 @@ local bkpdirectorykey = {
 }
 
 --#region AgentCucco pause manager for DSS
+local function DeleteParticles()
+    for _, ember in ipairs(Isaac.FindByType(EntityType.ENTITY_EFFECT, EffectVariant.FALLING_EMBER, -1)) do
+        if ember:Exists() then
+            ember:Remove()
+        end
+    end
+    if REPENTANCE then
+        for _, rain in ipairs(Isaac.FindByType(EntityType.ENTITY_EFFECT, EffectVariant.RAIN_DROP, -1)) do
+            if rain:Exists() then
+                rain:Remove()
+            end
+        end
+    end
+end
+
 local OldTimer
 local OldTimerBossRush
 local OldTimerHush
@@ -633,18 +678,7 @@ local function OverridePause(self, player, hook, action)
 
 	if action == ButtonAction.ACTION_SHOOTRIGHT then
 		OverwrittenPause = true
-		for _, ember in ipairs(Isaac.FindByType(EntityType.ENTITY_EFFECT, EffectVariant.FALLING_EMBER, -1)) do
-			if ember:Exists() then
-				ember:Remove()
-			end
-		end
-		if REPENTANCE then
-			for _, rain in ipairs(Isaac.FindByType(EntityType.ENTITY_EFFECT, EffectVariant.RAIN_DROP, -1)) do
-				if rain:Exists() then
-					rain:Remove()
-				end
-			end
-		end
+		DeleteParticles()
 		return true
 	end
 end
@@ -674,6 +708,7 @@ local function FreezeGame(unfreeze)
 		Game().TimeCounter = OldTimer
 		Game().BossRushParTime = OldTimerBossRush
 		Game().BlueWombParTime = OldTimerHush
+        DeleteParticles()
 	end
 end
 
