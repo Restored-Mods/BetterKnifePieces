@@ -328,12 +328,10 @@ function mod:SpawnKnifePieces()
                     newitem = itemPool:GetCollectible(itemPool:GetLastPool(),true,item.InitSeed)
                 end
                 item:ToPickup():Morph(EntityType.ENTITY_PICKUP,PickupVariant.PICKUP_COLLECTIBLE, newitem,true,true)
-                mscMng:Play(Music.MUSIC_MOTHERS_SHADOW_INTRO, Options.MusicVolume)
-                mscMng:Queue(Music.MUSIC_MINESHAFT_ESCAPE)
+                Game():GetLevel():SetStateFlag(LevelStateFlag.STATE_MINESHAFT_ESCAPE, true)
             end
         end
     end
-    
 end
 mod:AddPriorityCallback(ModCallbacks.MC_POST_NEW_ROOM, 999, mod.SpawnKnifePieces)
 
