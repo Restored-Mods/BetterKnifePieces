@@ -7,7 +7,6 @@ local doKnifeCollecting = true
 local anyOneHasKnifePiece1 = false
 local anyOneHasKnifePiece2 = false
 local DarkItemPool = {}
-local mscMng = (MMC and MMC.Manager or MusicManager)()
 local json = require("json")
 
 local dssdata = {}
