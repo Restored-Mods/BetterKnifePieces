@@ -8,10 +8,17 @@ local anyOneHasKnifePiece1 = false
 local anyOneHasKnifePiece2 = false
 local DarkItemPool = {}
 local json = require("json")
+local MOTHER_TYPE = Isaac.GetEntityTypeByName("Fightable Mother's Shadow")
 
 local dssdata = {}
 
 local CustomMirrorDoorNames = {"FFGMirrorDoor"}
+local chosenItem
+
+local function InMomsShadowRoom()
+    return game:GetRoom():HasCurseMist() and (#Isaac.FindByType(EntityType.ENTITY_MOTHERS_SHADOW) > 0 or 
+    MOTHER_TYPE > 0 and #Isaac.FindByType(MOTHER_TYPE) > 0)
+end
 
 local function GetRandomDarkPoolItem(seed)
     local newt = 0
@@ -35,6 +42,7 @@ local function GetRandomDarkPoolItem(seed)
             table.remove(DarkItemPool,idx)
         end
     end
+    chosenItem = newt
     return newt
 end
 
@@ -203,9 +211,11 @@ function mod:Load(isLoad)
             anyOneHasKnifePiece1 = load[3]
             anyOneHasKnifePiece2 = load[4]
             DarkItemPool = load[5]
+            chosenItem = load[8]
         else
             anyOneHasKnifePiece1 = false
             anyOneHasKnifePiece2 = false
+            chosenItem = nil
         end
         if load[6] ~= nil then
             dssdata = load[6]
@@ -227,7 +237,7 @@ end
 mod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, mod.Load)
 
 function mod:Save(isSave)
-    mod:SaveData(json.encode({hadKnife1,hadKnife2,anyOneHasKnifePiece1,anyOneHasKnifePiece2,DarkItemPool,dssdata,doKnifeCollecting}))
+    mod:SaveData(json.encode({hadKnife1,hadKnife2,anyOneHasKnifePiece1,anyOneHasKnifePiece2,DarkItemPool,dssdata,doKnifeCollecting,chosenItem}))
 end
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, mod.Save)
 
@@ -318,7 +328,7 @@ function mod:SpawnKnifePieces()
                     end
                 end
             end
-        elseif room:HasCurseMist() and hadKnife2 and room:IsFirstVisit() then
+        elseif hadKnife2 and room:IsFirstVisit() and InMomsShadowRoom() then
             local items = Isaac.FindByType(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_KNIFE_PIECE_2)
             if items[1] then
                 local item = items[1]:ToPickup()
@@ -326,13 +336,54 @@ function mod:SpawnKnifePieces()
                 if newitem == 0 or anyHasChaos then
                     newitem = itemPool:GetCollectible(itemPool:GetLastPool(),true,item.InitSeed)
                 end
-                item:ToPickup():Morph(EntityType.ENTITY_PICKUP,PickupVariant.PICKUP_COLLECTIBLE, newitem,true,true)
-                Game():GetLevel():SetStateFlag(LevelStateFlag.STATE_MINESHAFT_ESCAPE, true)
+                chosenItem = newitem
+                item:GetSprite():ReplaceSpritesheet(1, Isaac.GetItemConfig():GetCollectible(chosenItem).GfxFileName)
+                item:GetSprite():LoadGraphics()
+                item:GetData().ChosenItemSprite = true
+                --item:ToPickup():Morph(EntityType.ENTITY_PICKUP,PickupVariant.PICKUP_COLLECTIBLE, newitem,true,true)
+                --Game():GetLevel():SetStateFlag(LevelStateFlag.STATE_MINESHAFT_ESCAPE, true)
             end
         end
     end
 end
 mod:AddPriorityCallback(ModCallbacks.MC_POST_NEW_ROOM, 999, mod.SpawnKnifePieces)
+
+---@param pickup EntityPickup
+mod:AddPriorityCallback(ModCallbacks.MC_POST_PICKUP_RENDER, CallbackPriority.EARLY - 200, function(_, pickup)
+    if pickup.SubType == CollectibleType.COLLECTIBLE_KNIFE_PIECE_2 and game:GetRoom():HasCurseMist() and chosenItem ~= nil
+    and not pickup:GetData().ChosenItemSprite then
+        pickup:GetSprite():ReplaceSpritesheet(1, Isaac.GetItemConfig():GetCollectible(chosenItem).GfxFileName)
+        pickup:GetSprite():LoadGraphics()
+        pickup:GetData().ChosenItemSprite = true
+    end
+end, PickupVariant.PICKUP_COLLECTIBLE)
+
+---@param player EntityPlayer
+mod:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, function(_, player)
+    if InMomsShadowRoom() and chosenItem ~= nil and player.QueuedItem.Item and player.QueuedItem.Item.ID == CollectibleType.COLLECTIBLE_KNIFE_PIECE_2 then
+        local queue = player.QueuedItem
+        local itemConf = Isaac.GetItemConfig():GetCollectible(chosenItem)
+        queue.Item = itemConf
+        player.QueuedItem = queue
+        game:GetHUD():ShowItemText(player, Isaac.GetItemConfig():GetCollectible(chosenItem))
+    end
+end)
+
+local function DarkItemPoolConditions(descObj)
+    if descObj.ObjType == 5 and descObj.ObjVariant == 100 and descObj.ObjSubType == CollectibleType.COLLECTIBLE_KNIFE_PIECE_2 then
+        return chosenItem ~= nil
+    end
+    return false
+end
+
+---@param descObj EID_DescObj
+local function DarkItemPoolModifierCallback(descObj)
+    return EID:getDescriptionObj(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, chosenItem)
+end
+
+EID:addDescriptionModifier("Dark Item Pool Modifier", DarkItemPoolConditions, DarkItemPoolModifierCallback)
+
+
 
 if REPENTOGON then
     function mod:SaveSlotLoaded()
