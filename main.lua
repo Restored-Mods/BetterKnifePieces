@@ -396,51 +396,35 @@ if REPENTOGON then
     end
     mod:AddCallback(ModCallbacks.MC_POST_SAVESLOT_LOAD, mod.SaveSlotLoaded)
 
-    if not ImGui.ElementExists("tcMods") then
-        ImGui.CreateMenu("tcMods", "TC Mods")
+    if not ImGui.ElementExists("RestoredMods") then
+        ImGui.CreateMenu("RestoredMods", "Restored Mods")
     end
 
-    if not ImGui.ElementExists("betterKnifePieces") then
-        ImGui.AddElement("tcMods", "betterKnifePieces", ImGuiElement.MenuItem, "Better Knife Pieces")
+    if not ImGui.ElementExists("rmBetterKnifePieces") then
+        ImGui.AddElement("RestoredMods", "rmBetterKnifePieces", ImGuiElement.MenuItem, "Better Knife Pieces")
     end
 
-    if not ImGui.ElementExists("betterKnifePiecesWindow") then
-        ImGui.CreateWindow("betterKnifePiecesWindow", "Better Knife Pieces")
+    if not ImGui.ElementExists("rmBetterKnifePiecesWindow") then
+        ImGui.CreateWindow("rmBetterKnifePiecesWindow", "Better Knife Pieces")
     end
 
-    ImGui.LinkWindowToElement("betterKnifePiecesWindow", "betterKnifePieces")
-    ImGui.SetWindowSize("betterKnifePiecesWindow", 500, 100)
+    ImGui.LinkWindowToElement("rmBetterKnifePiecesWindow", "rmBetterKnifePieces")
+    ImGui.SetWindowSize("rmBetterKnifePiecesWindow", 500, 100)
 
-    --[[if ImGui.ElementExists("betterKnifePiecesCollected1") then
-        ImGui.RemoveElement("betterKnifePiecesCollected1")
+    if ImGui.ElementExists("rmBetterKnifePiecesDoCollection") then
+        ImGui.RemoveElement("rmBetterKnifePiecesDoCollection")
     end
 
-    ImGui.AddCheckbox("betterKnifePiecesWindow", "betterKnifePiecesCollected1", "Knife Piece 1 collected", function(val)
-        hadKnife1 = val
-    end, false)
-
-    if ImGui.ElementExists("betterKnifePiecesCollected2") then
-        ImGui.RemoveElement("betterKnifePiecesCollected2")
-    end
-
-    ImGui.AddCheckbox("betterKnifePiecesWindow", "betterKnifePiecesCollected2", "Knife Piece 2 collected", function(val)
-        hadKnife2 = val
-    end, false)]]
-
-    if ImGui.ElementExists("betterKnifePiecesDoCollection") then
-        ImGui.RemoveElement("betterKnifePiecesDoCollection")
-    end
-
-    ImGui.AddCheckbox("betterKnifePiecesWindow", "betterKnifePiecesDoCollection", "Spawn unlocked knife pieces", function(val)
+    ImGui.AddCheckbox("rmBetterKnifePiecesWindow", "rmBetterKnifePiecesDoCollection", "Spawn unlocked knife pieces", function(val)
         doKnifeCollecting = val
     end, true)
 
-    ImGui.SetHelpmarker("betterKnifePiecesDoCollection", "Spawn knife pieces in rooms with entrance to mirror world and mineshaft")
+    ImGui.SetHelpmarker("rmBetterKnifePiecesDoCollection", "Spawn knife pieces in rooms with entrance to mirror world and mineshaft")
 
-    ImGui.AddCallback("betterKnifePiecesWindow", ImGuiCallback.Render, function()
+    ImGui.AddCallback("rmBetterKnifePiecesWindow", ImGuiCallback.Render, function()
         --ImGui.UpdateData("betterKnifePiecesCollected1", ImGuiData.Value, hadKnife1)
         --ImGui.UpdateData("betterKnifePiecesCollected2", ImGuiData.Value, hadKnife2)
-        ImGui.UpdateData("betterKnifePiecesDoCollection", ImGuiData.Value, doKnifeCollecting)
+        ImGui.UpdateData("rmBetterKnifePiecesDoCollection", ImGuiData.Value, doKnifeCollecting)
     end)
 end
 
