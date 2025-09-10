@@ -369,19 +369,21 @@ mod:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, function(_, player)
     end
 end)
 
-local function DarkItemPoolConditions(descObj)
-    if descObj.ObjType == 5 and descObj.ObjVariant == 100 and descObj.ObjSubType == CollectibleType.COLLECTIBLE_KNIFE_PIECE_2 then
-        return chosenItem ~= nil
+if EID then
+    local function DarkItemPoolConditions(descObj)
+        if descObj.ObjType == 5 and descObj.ObjVariant == 100 and descObj.ObjSubType == CollectibleType.COLLECTIBLE_KNIFE_PIECE_2 then
+            return chosenItem ~= nil
+        end
+        return false
     end
-    return false
-end
 
----@param descObj EID_DescObj
-local function DarkItemPoolModifierCallback(descObj)
-    return EID:getDescriptionObj(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, chosenItem)
-end
+    ---@param descObj EID_DescObj
+    local function DarkItemPoolModifierCallback(descObj)
+        return EID:getDescriptionObj(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, chosenItem)
+    end
 
-EID:addDescriptionModifier("Dark Item Pool Modifier", DarkItemPoolConditions, DarkItemPoolModifierCallback)
+    EID:addDescriptionModifier("Dark Item Pool Modifier", DarkItemPoolConditions, DarkItemPoolModifierCallback)
+end
 
 
 
