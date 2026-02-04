@@ -115,20 +115,6 @@ end
 
 function mod:Load(isLoad)
     DarkItemPool = {
-        CollectibleType.COLLECTIBLE_BOOK_OF_BELIAL,
-        CollectibleType.COLLECTIBLE_BOOK_OF_SIN,
-        CollectibleType.COLLECTIBLE_PONY,
-        CollectibleType.COLLECTIBLE_GUPPYS_PAW,
-        CollectibleType.COLLECTIBLE_GUPPYS_HEAD,
-        CollectibleType.COLLECTIBLE_D8,
-        CollectibleType.COLLECTIBLE_MEGA_BLAST,
-        CollectibleType.COLLECTIBLE_CLICKER,
-        CollectibleType.COLLECTIBLE_MAMA_MEGA,
-        CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD,
-        CollectibleType.COLLECTIBLE_WAVY_CAP,
-        CollectibleType.COLLECTIBLE_LEMEGETON,
-        CollectibleType.COLLECTIBLE_ANIMA_SOLA,
-        CollectibleType.COLLECTIBLE_SPINDOWN_DICE,
         CollectibleType.COLLECTIBLE_20_20,
         CollectibleType.COLLECTIBLE_LUMP_OF_COAL,
         CollectibleType.COLLECTIBLE_BALL_OF_TAR,

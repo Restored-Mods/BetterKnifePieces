@@ -2,8 +2,6 @@
 	<Pool Name="dark mineshaft">
         <!--Halo of Flies-->
 		<Item Id="10" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-		<!--The Book of Belial-->
-		<Item Id="34" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Steven-->
 		<Item Id="50" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Distant Admiration-->
@@ -16,8 +14,6 @@
 		<Item Id="87" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Spider Bite-->
 		<Item Id="89" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-        <!--The Book of Sin-->
-		<Item Id="97" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Little Gish-->
 		<Item Id="99" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Little Steven-->
@@ -28,16 +24,10 @@
 		<Item Id="117" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Bobby-Bomb-->
 		<Item Id="125" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-        <!--A Pony-->
-		<Item Id="130" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--A Lump of Coal-->
 		<Item Id="132" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-        <!--Guppy's Paw-->
-		<Item Id="133" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<!--Guppy's Tail-->
 		<Item Id="134" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-		<!--Guppy's Head-->
-		<Item Id="145" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Celtic Cross-->
 		<Item Id="162" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Cat-o-nine-tails-->
@@ -88,8 +78,6 @@
 		<Item Id="366" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Spear Of Destiny-->
 		<Item Id="400" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-        <!--D8-->
-		<Item Id="406" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Athame-->
 		<Item Id="408" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Empty Vessel-->
@@ -100,16 +88,10 @@
 		<Item Id="420" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--My Shadow-->
 		<Item Id="433" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-        <!--Mega Blast-->
-		<Item Id="441" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Dark Prince's Crown-->
 		<Item Id="442" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Analog Stick-->
 		<Item Id="465" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-        <!--Clicker-->
-		<Item Id="482" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-        <!--Mama Mega!-->
-		<Item Id="483" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Euthanasia-->
 		<Item Id="496" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Little Horn-->
@@ -124,12 +106,8 @@
 		<Item Id="520" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Flat Stone-->
 		<Item Id="540" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-        <!--Book of the Dead-->
-		<Item Id="545" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--The Intruder-->
 		<Item Id="575" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-        <!--Wavy Cap-->
-		<Item Id="582" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Rocket in a Jar-->
 		<Item Id="583" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Lodestone-->
@@ -162,15 +140,9 @@
 		<Item Id="701" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Stapler-->
 		<Item Id="708" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-        <!--Lemegeton-->
-		<Item Id="712" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
         <!--Keeper's Sack-->
 		<Item Id="716" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<!--Keeper's Kin-->
 		<Item Id="717" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-        <!--Anima Sola-->
-		<Item Id="722" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-        <!--Spindown Dice-->
-		<Item Id="723" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 	</Pool>
 </ItemPools>
